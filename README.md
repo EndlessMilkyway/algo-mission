@@ -15,3 +15,9 @@
 - 합 계산기
 - 합리적 소비
 - 과연 승자는?
+
+## [기초 시뮬레이션](https://github.com/EndlessMilkyway/algo-mission/blob/main/03-simulation/RESULT.md)
+
+- 나무꾼 구름이
+- 복제 로봇
+- 빵야
