@@ -12,93 +12,36 @@ import java.util.StringTokenizer;
 import java.util.Arrays;
 
 class Main {
-	private static int treesCount;
-	private static int startPosition;
-	private static int cuttingCriteria;
-	private static int cuttingChance;
-	
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String[] firstLine = br.readLine().split(" ");
 		
-		treesCount = Integer.parseInt(firstLine[0]);
-		cuttingCriteria = Integer.parseInt(firstLine[1]);
-		startPosition = Integer.parseInt(firstLine[2]);
+		int N = Integer.parseInt(firstLine[0]);			// 나무의 그루 수
+		int M = Integer.parseInt(firstLine[1]);			// 벌목 높이 제한
+		int X = Integer.parseInt(firstLine[2]) - 1; // 구름이가 위치한 나무
 		
-		int[] treeHeightData = new int[treesCount];
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < treesCount; i++) {
-			treeHeightData[i] = Integer.parseInt(st.nextToken());
+		// 초기 나무 높이
+		int[] H = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		
+		int Q = Integer.parseInt(br.readLine());		// 벌목 횟수
+		String[] D = br.readLine().split(" ");			// 이동 방향 배열
+		
+		long result = 0L;														// 소지 목재량
+		
+		for (int i = 0; i < Q; i++) {
+			if (H[X] + i >= M) {											// 벌목 과정
+				result += H[X] + i;
+				H[X] -= H[X] + i;
+			}
+
+			if (D[i].equals("L")) {										// 이동 과정
+				X = (X - 1 + N) % N;
+			} else if (D[i].equals("R")) {
+				X = (X + 1) % N;
+			}
 		}
-		
-		cuttingChance = Integer.parseInt(br.readLine());
-		String[] directionData = new String[cuttingChance];
-		st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < cuttingChance; i++) {
-			directionData[i] = st.nextToken();
-		}
-		
-		long result = logic(treeHeightData, directionData);
 		
 		System.out.println(result);
-	}
-	
-	private static long logic(int[] treeHeightData, String[] directionData) {
-		long woodAmount = 0L;
-		
-		int position = startPosition - 1;
-		
-		for (int i = 0; i < cuttingChance; i++) {
-			// 벌목
-			woodAmount += cuttingTree(treeHeightData, position);
-			// 위치 이동
-			position = movePosition(directionData[i], position);
-			// 나무 성장
-			treeGrow(treeHeightData);
-		}
-		
-		return woodAmount;
-	}
-	
-	private static long cuttingTree(int[] treeHeightData, int position) {
-		long amount = 0L;
-		
-		// 해당 나무가 벌목이 가능하면 벌목
-		if (treeHeightData[position] >= cuttingCriteria) {
-			// 나무를 벌목 -> 목재량이 증가한다.
-			amount = treeHeightData[position];
-			// 벌목한 나무의 높이가 0이 된다.
-			treeHeightData[position] = 0;
-		}
-		
-		return amount;
-	}
-	
-	private static int movePosition(String direction, int position) {
-		if (direction.equals("L")) {
-      // 현재 위치가 배열의 첫 번째 요소일 경우 배열의 마지막 요소로 이동
-			if (position == 0) {
-				return treesCount - 1;
-			}
-			return position - 1;
-		}
-			
-		if (direction.equals("R")) {
-      // 현재 위치가 배열의 마지막 요소일 경우 배열의 첫번째 요소로 이동
-			if (position == treesCount - 1) {	
-				return 0;
-			}
-			return position + 1;
-		}
-		
-		return position;
-	}
-	
-	private static void treeGrow(int[] treeHeightData) {
-		// 벌목과 이동이 모두 끝나면 나무가 1만큼 성장한다.
-		for (int j = 0; j < treeHeightData.length; j++) {
-			treeHeightData[j] += 1;
-		}
 	}
 }
 ```
@@ -114,48 +57,40 @@ class Main {
 ### 소스코드
 
 ```java
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+
 class Main {
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String[] input = br.readLine().split(" ");
+		int[] input = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 		
-		// 초기 좌표
-		Coord current = initCoord(input);
+		Coord current = new Coord(input[0], input[1]);	// 초기 좌표
+		int N = Integer.parseInt(br.readLine());				// 웅덩이 개수
 		
-		// 웅덩이 개수
-		int N = Integer.parseInt(br.readLine());
-		
-		// 웅덩이 정보
-		Coord[] ponds = new Coord[N];
+		Coord[] ponds = new Coord[N];										// 웅덩이 분포 정보
 		for (int i = 0; i < N; i++) {
-			input = br.readLine().split(" ");
-			ponds[i] = initCoord(input);
+			input = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+			ponds[i] = new Coord(input[0], input[1]);
 		}
 		
-		// 조종 횟수
-		int Q = Integer.parseInt(br.readLine());
-		String[] commands = br.readLine().split(" ");
+		int Q = Integer.parseInt(br.readLine());			  // 조종 횟수
+		String[] commands = br.readLine().split(" ");   // 이동 커맨드 정보
 		
 		// 이동 명령 처리
 		for (String command : commands) {
 			DestCoord dest = new DestCoord(current.getX(), current.getY());
-			if (command.equals("L")) {
+			if (command.equals("L")) {					// 왼쪽으로 이동
 				dest.moveLeft();
 				moveToDest(current, dest, ponds);
-			}
-			
-			if (command.equals("R")) {
+			} else if (command.equals("R")) {		// 오른쪽으로 이동
 				dest.moveRight();
 				moveToDest(current, dest, ponds);
-			}
-			
-			if (command.equals("U")) {
+			} else if (command.equals("U")) {		// 상단으로 이동
 				dest.moveForward();
 				moveToDest(current, dest, ponds);
-			}
-			
-			if (command.equals("D")) {
+			} else {   													// 하단으로 이동
 				dest.moveBack();
 				moveToDest(current, dest, ponds);
 			}
@@ -164,31 +99,22 @@ class Main {
 		System.out.println(current.toString());
 	}
 	
-	// 초기 좌표 설정
-	private static Coord initCoord(String[] input) {
-		int x = Integer.parseInt(input[0]);
-		int y = Integer.parseInt(input[1]);
-		
-		return new Coord(x, y);
-	}
-	
-	// 가고자 하는 곳이 연못인지 확인
-	private static boolean isDestIsPond(DestCoord dest, Coord[] ponds) {
-		for (Coord pond : ponds) {
-			if (dest.isThisCoordEqual(pond)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
 	// 현재 위치 갱신
 	private static void moveToDest(Coord current, DestCoord dest, Coord[] ponds) {
 		if (!isDestIsPond(dest, ponds)) {
 			current.setX(dest.getX());
 			current.setY(dest.getY());
 		}
+	}
+  
+ 	// 가고자 하는 곳이 연못인지 확인
+	private static boolean isDestIsPond(DestCoord dest, Coord[] ponds) {
+		for (Coord pond : ponds) {
+			if (dest.isThisCoordEqual(pond)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	// 좌표 정보
@@ -276,7 +202,7 @@ class Main {
 		int[] H = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
 		
 		long totalCnt = 0;
-		int i = 0;
+		int damage = 0;
 		
 		/* 
 		 * Key Point. 데미지는 1, 2, 3, 4로 순환한다.
@@ -294,9 +220,9 @@ class Main {
 		
 		for (int health : H) {
 			// 데미지가 1이 되기 전까지 & 적의 체력이 남아있는 동안 사격
-			while (i > 0 && health > 0) {
-				health -= i + 1;
-				i = (i + 1) % 4;
+			while (damage > 0 && health > 0) {
+				health -= damage + 1;
+				damage = (damage + 1) % 4;
 				totalCnt++;
 			}
 			
@@ -305,14 +231,13 @@ class Main {
 				continue;
 			}
 			
-			// 위에서 도출한 수식을 활용하여 체력을 10미만으로 만든다.
+      // 위에서 도출한 수식을 활용하여 체력을 10미만으로 만든다.
 			totalCnt += (health / 10) * 4;
 			health %= 10;
 			
-      // 체력이 남아있을 경우 처음과 동일하게 한 사이클을 수행한다.
 			while (health > 0) {
-				health -= i + 1;
-				i = (i + 1) % 4;
+				health -= damage + 1;
+				damage = (damage + 1) % 4;
 				totalCnt++;
 			}
 		}
