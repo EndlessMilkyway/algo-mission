@@ -27,3 +27,8 @@
 - 시간 복잡도
 - 구름 RPG
 - GameJam
+
+## [정렬](https://github.com/EndlessMilkyway/algo-mission/blob/main/05-sorting/RESULT.md)
+
+- 해적왕 구름이
+- 이진수 정렬
