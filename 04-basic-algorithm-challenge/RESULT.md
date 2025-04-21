@@ -82,7 +82,6 @@ class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int N = Integer.parseInt(br.readLine());
 		
-		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < N; i++) {
 			int armor = Integer.parseInt(br.readLine());
 			if (isPrime(armor)) {
@@ -102,9 +101,42 @@ class Main {
 }
 ```
 
+### 시간복잡도 개선 코드
+
+```java
+import java.io.*;
+
+class Main {
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int N = Integer.parseInt(br.readLine());
+		
+		for (int i = 0; i < N; i++) {
+			int armor = Integer.parseInt(br.readLine());
+			if (isPrime(armor)) {
+				System.out.println("Yes");
+				continue;
+			}
+			System.out.println("No");
+		}
+	}
+
+	private static boolean isPrime(int armor) {
+			if (armor == 2) return true; // 2는 소수
+			if (armor % 2 == 0) return false; // 짝수는 2 제외하고 소수가 아님
+			for (int i = 3; i <= (int)Math.sqrt(armor); i += 2) {
+					if (armor % i == 0) return false;
+			}
+			return true;
+	}
+}
+```
+
 ### 실행결과
 
 ![02-goorm-rpg](./img/02-goorm-rpg.png)
+
+![02-goorm-rpg-running-time-improvement](./img/02-goorm-rpg-running-time-improvement.png)
 
 ---
 
@@ -208,12 +240,8 @@ class Main {
 
     private static int calcPos(int pos, int boardSize) {
         // 인덱스 범위를 넘어가는 경우에 대한 처리
-        if (pos == -1) {
-            return boardSize - 1;
-        }
-        if (pos == boardSize) {
-            return 0;
-        }
+        if (pos == -1) return boardSize - 1;
+        if (pos == boardSize) return 0;
         return pos;
     }
 
