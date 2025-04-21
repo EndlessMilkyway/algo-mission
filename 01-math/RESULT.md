@@ -204,6 +204,37 @@ class Main {
 }
 ```
 
+###  소스코드 - 시간복잡도 증가 발생 가능성 개선
+
+```java
+import java.io.*;
+import java.util.StringTokenizer;
+import java.util.Arrays;
+
+class Main {
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+
+		int T = Integer.parseInt(br.readLine());
+		int count = 0;
+		
+		for (int i = 0; i < T; i++) {
+			long[] inputs = Arrays.stream(br.readLine().split(" ")).mapToLong(Long::parseLong).toArray();
+			long A = inputs[0]; long B = inputs[1];
+			
+			if (A < B) {
+				if (A * 1.6 <= B && B <= A * 1.63) count++;
+				continue;
+			}
+			if (B * 1.6 <= A && A <= B * 1.63) count++;
+		}
+		
+		System.out.println(count);
+	}
+}
+```
+
 ### 실행결과
 
 ![03-golden-ratio](./img/03-golden-ratio.png)
