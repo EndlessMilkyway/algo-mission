@@ -10,45 +10,165 @@
 import java.io.*;
 import java.util.StringTokenizer;
 import java.util.Arrays;
+ 
+class Main {
+	private static int treesCount;
+	private static int startPosition;
+ 	private static int cuttingCriteria;
+	private static int cuttingChance;
+ 	
+ 	public static void main(String[] args) throws Exception {
+ 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String[] firstLine = br.readLine().split(" ");
+ 		
+ 		treesCount = Integer.parseInt(firstLine[0]);
+		cuttingCriteria = Integer.parseInt(firstLine[1]);
+		startPosition = Integer.parseInt(firstLine[2]);
+ 		
+		int[] treeHeightData = new int[treesCount];
+		StringTokenizer st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < treesCount; i++) {
+ 			treeHeightData[i] = Integer.parseInt(st.nextToken());
+		}
+ 		
+ 		cuttingChance = Integer.parseInt(br.readLine());
+		String[] directionData = new String[cuttingChance];
+		st = new StringTokenizer(br.readLine());
+		for (int i = 0; i < cuttingChance; i++) {
+ 			directionData[i] = st.nextToken();
+		}
+ 		
+ 		long result = logic(treeHeightData, directionData);
+ 		
+		System.out.println(result);
+	}
+ 	
+	private static long logic(int[] treeHeightData, String[] directionData) {
+ 		long woodAmount = 0L;
+ 		
+		int position = startPosition - 1;
+ 	
+		for (int i = 0; i < cuttingChance; i++) {
+ 			// 벌목
+			woodAmount += cuttingTree(treeHeightData, position);
+ 			// 위치 이동
+			position = movePosition(directionData[i], position);
+ 			// 나무 성장
+			treeGrow(treeHeightData);
+ 		}
+ 		
+		return woodAmount;
+	}
+ 	
+ 	private static long cuttingTree(int[] treeHeightData, int position) {
+ 		long amount = 0L;
+ 		
+		// 해당 나무가 벌목이 가능하면 벌목
+		if (treeHeightData[position] >= cuttingCriteria) {
+			// 나무를 벌목 -> 목재량이 증가한다.
+ 			amount = treeHeightData[position];
+			// 벌목한 나무의 높이가 0이 된다.
+			treeHeightData[position] = 0;
+ 		}
+ 		
+		return amount;
+ 	}
+ 	
+	private static int movePosition(String direction, int position) {
+		if (direction.equals("L")) {
+   			// 현재 위치가 배열의 첫 번째 요소일 경우 배열의 마지막 요소로 이동
+ 			if (position == 0) {
+				return treesCount - 1;
+ 			}
+			return position - 1;
+		}
+ 			
+		if (direction.equals("R")) {
+  			// 현재 위치가 배열의 마지막 요소일 경우 배열의 첫번째 요소로 이동
+			if (position == treesCount - 1) {	
+				return 0;
+ 			}
+			return position + 1;
+		}
+ 		
+		return position;
+	}
+ 	
+ 	private static void treeGrow(int[] treeHeightData) {
+		// 벌목과 이동이 모두 끝나면 나무가 1만큼 성장한다.
+ 		for (int j = 0; j < treeHeightData.length; j++) {
+ 			treeHeightData[j] += 1;
+ 		}
+ 	}
+ }
+```
+
+### 소스코드 - 실행 시간 개선
+
+```java
+import java.io.*;
+import java.util.StringTokenizer;
+import java.util.Arrays;
 
 class Main {
+	
+	private static int N;
+	private static int M;
+	private static int X;
+	
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String[] firstLine = br.readLine().split(" ");
 		
-		int N = Integer.parseInt(firstLine[0]);			// 나무의 그루 수
-		int M = Integer.parseInt(firstLine[1]);			// 벌목 높이 제한
-		int X = Integer.parseInt(firstLine[2]) - 1; // 구름이가 위치한 나무
+		N = Integer.parseInt(firstLine[0]);
+		M = Integer.parseInt(firstLine[1]);
+		X = Integer.parseInt(firstLine[2]) - 1;
 		
-		// 초기 나무 높이
 		int[] H = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
+		int Q = Integer.parseInt(br.readLine());
+		String[] D = br.readLine().split(" ");
 		
-		int Q = Integer.parseInt(br.readLine());		// 벌목 횟수
-		String[] D = br.readLine().split(" ");			// 이동 방향 배열
-		
-		long result = 0L;														// 소지 목재량
-		
-		for (int i = 0; i < Q; i++) {
-			if (H[X] + i >= M) {											// 벌목 과정
-				result += H[X] + i;
-				H[X] -= H[X] + i;
-			}
-
-			if (D[i].equals("L")) {										// 이동 과정
-				X = (X - 1 + N) % N;
-			} else if (D[i].equals("R")) {
-				X = (X + 1) % N;
-			}
-		}
+		long result = logic(H, D);
 		
 		System.out.println(result);
 	}
-}
+	
+	private static long logic(int[] H, String[] D) {
+		long result = 0L;
+	
+		for (int i = 0; i < D.length; i++) {
+			result += cuttingTree(H, i);
+			movePosition(D[i]);
+		}
+		
+		return result;
+	}
+	
+	private static long cuttingTree(int[] H, int i) {
+		if (H[X] + i >= M) {
+ 			long val = H[X] + i;
+			H[X] -= val;
+			
+			return val;
+ 		}
+		return 0L;
+ 	}
+ 	
+	private static void movePosition(String direction) {
+		if (direction.equals("L")) {
+			X = (X - 1 + N) % N;
+		} else if (direction.equals("R")) {
+			X = (X + 1) % N;
+		}
+	}
+ }
 ```
 
 ### 실행결과
 
 ![01-logger-goorm](./img/01-logger-goorm.png)
+
+![01-logger-goorm-running-time-improvment](./img/01-logger-goorm-running-time-improvment.png)
 
 ---
 
