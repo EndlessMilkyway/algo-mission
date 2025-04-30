@@ -44,3 +44,10 @@
 - 문자열 나누기
 - 구름 찾기 깃발
 - 구름 RPG 2
+
+## [이분 탐색 (이진 탐색)](https://github.com/EndlessMilkyway/algo-mission/blob/main/08-binary-search/RESULT.md)
+
+- 방 탈출하기
+- 섭외하기 대작전
+- 게임 마스터
+- 가장 가까운 점 찾기
