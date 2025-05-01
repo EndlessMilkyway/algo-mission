@@ -51,3 +51,10 @@
 - 섭외하기 대작전
 - 게임 마스터
 - 가장 가까운 점 찾기
+
+## [자료구조](https://github.com/EndlessMilkyway/algo-mission/blob/main/09-data-structure/RESULT.md)
+
+- 뒤통수가 따가워
+- 재고정리
+- 아이템 교환
+- 묶음 상품
